@@ -43,6 +43,7 @@ export default function TabLayout() {
         options={{
           headerShown: false,
           title: 'Login',
+          tabBarButton: () => null,
           tabBarStyle: { display: 'none' },
         }}
       />
@@ -51,6 +52,7 @@ export default function TabLayout() {
         options={{
           headerShown: false,
           title: 'Sign Up',
+          tabBarButton: () => null,
           tabBarStyle: { display: 'none' },
         }}
         />

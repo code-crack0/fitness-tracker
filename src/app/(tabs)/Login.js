@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Image, Dimensions } from 'react-native';
 import { TextInput, Button, Text, Title } from 'react-native-paper';
-
+import { useRouter } from 'expo-router';
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
 export default function LoginScreen() {
@@ -13,7 +13,7 @@ export default function LoginScreen() {
     // Handle login logic here
     console.log("Login clicked");
   };
-
+  const router = useRouter()
   return (
     <View style={styles.container}>
       {/* Logo Section */}
@@ -52,6 +52,7 @@ export default function LoginScreen() {
           onPress={handleLogin}
           style={styles.loginButton}
           contentStyle={styles.loginButtonContent}
+          onPressIn={() => router.push('/Home')}
         >
           Login
         </Button>
