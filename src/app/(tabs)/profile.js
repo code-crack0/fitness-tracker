@@ -2,7 +2,7 @@ import React from 'react'
 import { Text, TouchableOpacity } from 'react-native'
 import { SafeAreaFrameContext, SafeAreaView } from 'react-native-safe-area-context'
 
-const profile = () => {
+const Profile = () => {
   return (
     <SafeAreaView>
         
@@ -10,4 +10,4 @@ const profile = () => {
   )
 }
 
-export default profile
+export default Profile
