@@ -56,6 +56,14 @@ export default function TabLayout() {
           tabBarStyle: { display: 'none' },
         }}
         />
+        <Tabs.Screen
+        name="Workout"
+        options={{
+          headerShown: false,
+          title: 'Workout',
+          tabBarIcon: ({ color }) => <FontAwesome size={28} name="bicycle" color={color} />,
+        }}
+      />
     </Tabs>
   );
 }
