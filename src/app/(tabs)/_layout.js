@@ -61,7 +61,7 @@ export default function TabLayout() {
         options={{
           headerShown: false,
           title: 'Workout',
-          tabBarIcon: ({ color }) => <FontAwesome size={28} name="bicycle" color={color} />,
+          tabBarIcon: ({ color }) => <FontAwesome size={28} name="user" color={color} />,
         }}
       />
     </Tabs>
