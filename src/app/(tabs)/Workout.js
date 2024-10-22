@@ -13,7 +13,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ScrollView } from "react-native";
 import GradientButton from "../components/gradientButton";
-import ExerciseCard from "../components/exerciseCard";
+import WorkoutCard from "../components/workoutCard";
 
 const categories = ["Arms", "Chest", "Legs", "Shoulders", "Abs", "Back"];
 const featured = [
@@ -34,13 +34,27 @@ const featured = [
     title: "Bicep Curl",
     image: require("../../../assets/images/bicepCurl.png"),
     desc: "A bicep curl is a strength exercise where you lift a weight by bending your elbow, targeting the biceps for arm strength and muscle definition.",
+  }
+];
+const fullbodyworkout = [
+  {
+    id: 1,
+    title: "HIIT Workout",
+    image: require("../../../assets/images/bicepCurl.png"),
+    desc: "Involves short bursts of intense exercise followed by brief rest periods. It's designed to burn fat, improve endurance, and boost metabolism in a short time.",
   },
   {
-    id: 4,
-    title: "Diamond Push Up",
-    image: require("../../../assets/images/diamondPushUp.png"),
-    desc: "A bodyweight exercise that targets the chest, triceps, and shoulders, with an added emphasis on the triceps. Your hands are positioned close together, forming a diamond shape by touching your thumbs and index fingers. This hand placement increases the intensity on the triceps while still engaging the chest and core. ",
+    id: 2,
+    title: "Dumbell Workout",
+    image: require("../../../assets/images/bicepCurl.png"),
+    desc: "Dumbbells are used to perform various exercises that target different muscle groups, helping to build strength, improve muscle tone, and increase endurance.",
   },
+  {
+    id: 3,
+    title: "Bodyweight Workout",
+    image: require("../../../assets/images/bicepCurl.png"),
+    desc: "This workout uses only your body as resistance for exercises like push-ups, squats, and planks, building strength, endurance, and flexibility without equipment.",
+  }
 ];
 
 export default function Workout() {
@@ -91,7 +105,7 @@ export default function Workout() {
             <Text
               className="ml-4 text-lg font-bold"
             >
-              Featured Exercises
+              Featured Workouts
             </Text>
             <View className="pl-4">
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -99,14 +113,53 @@ export default function Workout() {
                   featured.map((item, index) => {
                     return (
                       // exercise card component
-                      <ExerciseCard key={index} game={item}/>
-                      
+                      <WorkoutCard key={index} workout={item}/>
                     )
                   }
                   )
                 }
               </ScrollView>
             </View>
+          </View>
+
+          {/* top arm workouts go here */}
+          <View className="mt-3">
+            <View className="flex-row justify-between mb-2">
+                <Text className="ml-4 text-lg font-bold">
+                  Top Full Body Workouts
+                </Text>
+                {/* Shows list of all full body workouts */}
+                <TouchableOpacity className="mr-4">
+                  <Text className="text-blue-600 font-bold">
+                    See All
+                  </Text>
+                </TouchableOpacity>
+            </View>
+            <ScrollView className="h-320 w-full" showsVerticalScrollIndicator={false}>
+                {
+                  //fullbody workout list
+                  fullbodyworkout.map((workout, index)=>{
+                    return (
+                      <TouchableOpacity key={index} 
+                      className="mx-4 p-2 mb-2 flex-row w-full">
+                        <Image source={workout.image} style={{width: 80, height: 80}} 
+                        className="rounded-2xl"/>
+                        {/* max-w-[275] */}
+                        <View className='flex-1 flex justify-center pl-2 
+                        space-y-3 '>
+                          <Text className="font-semibold">
+                            {workout.title}
+                          </Text>
+                          <Text className="text-xs">
+                            {workout.desc}
+                          </Text>
+
+                        </View>
+                      </TouchableOpacity>
+                    )
+                  })
+                }
+            </ScrollView>
           </View>
         </View>
       </SafeAreaView>
