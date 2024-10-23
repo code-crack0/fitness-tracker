@@ -12,8 +12,8 @@ import { useRouter } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ScrollView } from "react-native";
-import GradientButton from "../components/gradientButton";
-import WorkoutCard from "../components/workoutCard";
+import GradientButton from "../../components/gradientButton";
+import WorkoutCard from "../../components/workoutCard";
 
 const categories = ["Arms", "Chest", "Legs", "Shoulders", "Abs", "Back"];
 const featured = [
@@ -135,7 +135,7 @@ export default function Workout() {
                   </Text>
                 </TouchableOpacity>
             </View>
-            <ScrollView className="h-320 w-full" showsVerticalScrollIndicator={false}>
+            <ScrollView className="h-[250px] w-full" contentContainerStyle={{paddingBottom:60}} showsVerticalScrollIndicator={false} style={{paddingBottom:60}}>
                 {
                   //fullbody workout list
                   fullbodyworkout.map((workout, index)=>{
@@ -147,11 +147,11 @@ export default function Workout() {
                         {/* max-w-[275] */}
                         <View className='flex-1 flex justify-center pl-2 
                         space-y-3 '>
-                          <Text className="font-semibold">
+                          <Text className="font-bold">
                             {workout.title}
                           </Text>
                           <Text className="text-xs">
-                            {workout.desc}
+                            {workout.desc.substring(0, 100)}...
                           </Text>
 
                         </View>

@@ -6,11 +6,22 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: 'blue',
+        tabBarInactiveTintColor: 'white',
         tabBarStyle: {
-          paddingVertical: 20, // Increase vertical padding
-          paddingBottom: 10, // Increase bottom padding
-          paddingTop: 10, // Increase top padding
-          height: 70, // Adjust height if necessary
+          position: 'absolute', // Makes the tab bar hover over the content
+          bottom: 10, // Adjust the distance from the bottom of the screen
+          paddingVertical: 10, // Adjust vertical padding
+          paddingBottom: 10,
+          paddingTop: 10,
+          height: 60, // Adjust height if necessary
+          borderRadius: 30, // Adjust border radius to make it rounded
+          maxWidth: 'auto',
+          marginHorizontal: 20, // Adjust horizontal margin
+          alignSelf: 'center', // Center the tab bar horizontally
+          backgroundColor: '#F1E398', // Remove the background
+          elevation: 0, // Remove shadow on Android
+          shadowOpacity: 0, // Remove shadow on iOS
+          borderTopWidth: 0, // Remove the top border of the tab bar
         },
       }}
     >
@@ -61,7 +72,7 @@ export default function TabLayout() {
         options={{
           headerShown: false,
           title: 'Workout',
-          tabBarIcon: ({ color }) => <FontAwesome size={28} name="user" color={color} />,
+          tabBarIcon: ({ color }) => <FontAwesome size={28} name="bicycle" color={color} />,
         }}
       />
     </Tabs>
