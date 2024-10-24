@@ -1,6 +1,6 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Tabs } from 'expo-router';
-
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 export default function TabLayout() {
   return (
     <Tabs
@@ -73,6 +73,14 @@ export default function TabLayout() {
           headerShown: false,
           title: 'Workout',
           tabBarIcon: ({ color }) => <FontAwesome size={28} name="bicycle" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="Camera"
+        options={{
+          headerShown:false,
+          title: "Diet",
+          tabBarIcon: ({color}) =><FontAwesome6 name="bowl-food" size={24} color = {color} />
         }}
       />
     </Tabs>
