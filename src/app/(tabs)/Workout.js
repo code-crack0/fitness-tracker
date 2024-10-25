@@ -22,6 +22,7 @@ const featured = [
     title: "Diamond Push Up",
     image: require("../../../assets/images/diamondPushUp.png"),
     desc: "A bodyweight exercise that targets the chest, triceps, and shoulders, with an added emphasis on the triceps. Your hands are positioned close together, forming a diamond shape by touching your thumbs and index fingers. This hand placement increases the intensity on the triceps while still engaging the chest and core.",
+
   },
   {
     id: 2,
@@ -113,7 +114,7 @@ export default function Workout() {
                   featured.map((item, index) => {
                     return (
                       // exercise card component
-                      <WorkoutCard key={index} workout={item}/>
+                      <WorkoutCard key={index} workout={item} />
                     )
                   }
                   )
