@@ -43,12 +43,26 @@ export default function Home() {
 
   return (
     <SafeAreaView style={[styles.container]}>
-      <View style={{flexDirection:"row",alignItems:"center",justifyContent:"space-between",padding:10}}>
-        <Text style={[styles.heading]}>Welcome Back, XXXX</Text>
-        <Avatar.Text label="XD" size={50} />
-      </View>
 
       
+
+      <TouchableOpacity
+        onPress={openCamera} // Open the camera to capture a photo
+        style={[styles.button]}
+      >
+        <Text style={styles.buttonText}>Scan Meal</Text>
+        <FontAwesome
+          name="camera"
+          size={50}
+          color="white"
+          style={styles.icon}
+        />
+      </TouchableOpacity>
+      {selectedImage ? (
+        <Image source={{ uri: selectedImage }} style={styles.image} />
+      ) : (
+        <Text style={[styles.heading]}>No Image Selected</Text>
+      )}
     </SafeAreaView>
   );
 }
