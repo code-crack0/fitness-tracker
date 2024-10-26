@@ -156,7 +156,11 @@ export default function Workout() {
                       onPress={() =>
                         router.push({
                           pathname: "../workoutDetail",
-                          params: { workout },
+                          params: {
+                            title: workout.title,
+                            desc: workout.desc,
+                            exercises: workout.exercises
+                          },
                         })
                       }
                     >
