@@ -153,16 +153,16 @@ export default function Workout() {
                     <TouchableOpacity
                       key={index}
                       className="mx-4 p-2 mb-2 flex-row w-full"
-                      onPress={() =>
-                        router.push({
-                          pathname: "../workoutDetail",
-                          params: {
-                            title: workout.title,
-                            desc: workout.desc,
-                            exercises: workout.exercises
-                          },
-                        })
-                      }
+                      // onPress={() =>
+                      //   router.push({
+                      //     pathname: "../workoutDetail",
+                      //     params: {
+                      //       title: workout.title,
+                      //       desc: workout.desc,
+                      //       exercises: workout.exercises
+                      //     },
+                      //   })
+                      // }
                     >
                       <Image
                         source={workout.image}
