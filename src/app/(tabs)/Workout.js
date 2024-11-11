@@ -116,15 +116,12 @@ export default function Workout() {
             <Text className="ml-4 text-lg font-bold">Featured Workouts</Text>
             <View className="pl-4">
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                {
-                  featured.map((item, index) => {
-                    return (
-                      // exercise card component
-                      <WorkoutCard key={index} workout={item}/>
-                    )
-                  }
-                  )
-                }
+                {featured.map((item, index) => {
+                  return (
+                    // exercise card component
+                    <WorkoutCard key={index} workout={item} />
+                  );
+                })}
               </ScrollView>
             </View>
           </View>
@@ -155,7 +152,7 @@ export default function Workout() {
                       className="mx-4 p-2 mb-2 flex-row w-full"
                       onPress={() =>
                         router.push({
-                          pathname: "../workoutDetail",
+                          pathname: "/Excercise",
                           params: { workout },
                         })
                       }
