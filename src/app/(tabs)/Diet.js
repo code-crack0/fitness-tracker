@@ -1,17 +1,24 @@
-import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, View, FlatList, ScrollView } from "react-native";
+import React, { useState } from "react";
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Image } from "react-native";
 import { LineChart } from "react-native-chart-kit";
-import { Dimensions, Image } from "react-native";
+import { Dimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { TouchableOpacity } from "react-native";
 import * as ImagePicker from 'expo-image-picker';
-import FontAwesome from "react-native-vector-icons/FontAwesome";
+import { FontAwesome } from "@expo/vector-icons";
+import { DataTable } from "react-native-paper";
+import { LinearGradient } from 'expo-linear-gradient';
 
 const screenWidth = Dimensions.get("window").width;
 
-export default function Diet({ route }) {
-  const [foodItems, setFoodItems] = useState([]);
-  const [dailyCalories, setDailyCalories] = useState([]);
+export default function Diet() {
+  const [foodItems, setFoodItems] = useState([
+    { key: '1', name: 'Apple', calories: 95, grams: 182 },
+    { key: '2', name: 'Banana', calories: 105, grams: 118 },
+    { key: '3', name: 'Chicken Breast', calories: 165, grams: 100 },
+    { key: '4', name: 'Brown Rice', calories: 216, grams: 100 },
+    { key: '5', name: 'Broccoli', calories: 55, grams: 100 },
+  ]);
+  const [dailyCalories, setDailyCalories] = useState([2100, 1950, 2300, 2150, 2000, 2250, 2050]);
   const [selectedImage, setSelectedImage] = useState(null);
 
   const openCamera = async () => {
@@ -30,58 +37,85 @@ export default function Diet({ route }) {
     labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
     datasets: [
       {
-        data: dailyCalories.length ? dailyCalories : [0, 0, 0, 0, 0, 0, 0],
+        data: dailyCalories,
+        color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+        strokeWidth: 2
       },
     ],
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView>
-        <Text style={styles.title}>Diet Tracker</Text>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <LinearGradient
+          colors={['#4c669f', '#3b5998', '#192f6a']}
+          style={styles.header}
+        >
+          <Text style={styles.title}>Diet Tracker</Text>
+          <Text style={styles.subtitle}>Stay on top of your nutrition goals</Text>
+        </LinearGradient>
         
-        <TouchableOpacity onPress={openCamera} style={styles.button}>
-          <Text style={styles.buttonText}>Scan Meal</Text>
-          <FontAwesome name="camera" size={50} color="white" style={styles.icon} />
-        </TouchableOpacity>
+        <View style={styles.content}>
+          <TouchableOpacity onPress={openCamera} style={styles.button}>
+            <LinearGradient
+              colors={['#FF9A8B', '#FF6A88', '#FF99AC']}
+              style={styles.gradient}
+            >
+              <FontAwesome name="camera" size={24} color="white" style={styles.icon} />
+              <Text style={styles.buttonText}>Scan Meal</Text>
+            </LinearGradient>
+          </TouchableOpacity>
 
-        {selectedImage ? (
-          <Image source={{ uri: selectedImage }} style={styles.image} />
-        ) : (
-          <Text style={styles.heading}>No Image Selected</Text>
-        )}
-
-        {/* List of food items with calorie count */}
-        <FlatList
-          data={foodItems}
-          renderItem={({ item }) => (
-            <View style={styles.itemContainer}>
-              <Text style={styles.itemText}>{item.name}</Text>
-              <Text style={styles.itemCalories}>{item.calories} kcal</Text>
-            </View>
+          {selectedImage && (
+            <Image source={{ uri: selectedImage }} style={styles.image} />
           )}
-          keyExtractor={(item) => item.key}
-        />
 
-        <Text style={styles.graphTitle}>Weekly Calorie Intake</Text>
-        <LineChart
-          data={calorieData}
-          width={screenWidth * 0.9}
-          height={220}
-          chartConfig={{
-            backgroundColor: "#e26a00",
-            backgroundGradientFrom: "#fb8c00",
-            backgroundGradientTo: "#ffa726",
-            decimalPlaces: 0,
-            color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-            labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-            style: {
-              borderRadius: 16,
-            },
-          }}
-          bezier
-          style={styles.chart}
-        />
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>Today's Food Log</Text>
+            <DataTable style={styles.table}>
+              <DataTable.Header style={styles.tableHeader}>
+                <DataTable.Title>Food Item</DataTable.Title>
+                <DataTable.Title numeric>Calories</DataTable.Title>
+                <DataTable.Title numeric>Grams</DataTable.Title>
+              </DataTable.Header>
+
+              {foodItems.map((item) => (
+                <DataTable.Row key={item.key}>
+                  <DataTable.Cell>{item.name}</DataTable.Cell>
+                  <DataTable.Cell numeric>{item.calories}</DataTable.Cell>
+                  <DataTable.Cell numeric>{item.grams}</DataTable.Cell>
+                </DataTable.Row>
+              ))}
+            </DataTable>
+          </View>
+
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>Weekly Calorie Intake</Text>
+            <LineChart
+              data={calorieData}
+              width={screenWidth - 80}
+              height={220}
+              chartConfig={{
+                backgroundColor: "#e26a00",
+                backgroundGradientFrom: "#fb8c00",
+                backgroundGradientTo: "#ffa726",
+                decimalPlaces: 0,
+                color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                style: {
+                  borderRadius: 16,
+                },
+                propsForDots: {
+                  r: "6",
+                  strokeWidth: "2",
+                  stroke: "#ffa726"
+                }
+              }}
+              bezier
+              style={styles.chart}
+            />
+          </View>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -90,62 +124,81 @@ export default function Diet({ route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#f0f0f0",
+  },
+  header: {
     padding: 20,
-    backgroundColor: "#fff",
-  },
-  button: {
-    maxWidth: 150,
-    marginTop: 10,
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 10,
-    backgroundColor: "#F5853F",
-    borderRadius: 20,
-  },
-  heading: {
-    fontSize: 20,
-    marginTop: 20,
-  },
-  buttonText: {
-    marginBottom: 10,
-    color: "white",
-    fontWeight: "bold",
-  },
-  icon: {
-    marginTop: 10,
+    paddingTop: 40,
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
   },
   title: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: "bold",
+    color: "white",
+    marginBottom: 5,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: "rgba(255, 255, 255, 0.8)",
+  },
+  content: {
+    padding: 20,
+  },
+  button: {
+    borderRadius: 25,
+    overflow: 'hidden',
     marginBottom: 20,
   },
-  itemContainer: {
+  gradient: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 15,
   },
-  itemText: {
-    fontSize: 16,
-  },
-  itemCalories: {
-    fontSize: 16,
+  buttonText: {
+    color: "white",
     fontWeight: "bold",
+    fontSize: 16,
+    marginLeft: 10,
   },
-  graphTitle: {
+  icon: {
+    marginRight: 10,
+  },
+  card: {
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 20,
+    marginBottom: 20,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  cardTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    marginVertical: 20,
+    marginBottom: 15,
+    color: "#333",
+  },
+  table: {
+    marginTop: 10,
+  },
+  tableHeader: {
+    backgroundColor: "#f0f0f0",
   },
   chart: {
+    marginVertical: 8,
     borderRadius: 16,
   },
   image: {
-    width: 300,
-    height: 300,
-    marginTop: 20,
-    borderRadius: 10,
+    width: "100%",
+    height: 200,
+    borderRadius: 20,
+    marginBottom: 20,
   },
 });

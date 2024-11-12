@@ -41,6 +41,22 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <FontAwesome size={28} name="home" color={color} />,
         }}
       />
+       <Tabs.Screen
+        name="Workout"
+        options={{
+          headerShown: false,
+          title: 'Workout',
+          tabBarIcon: ({ color }) => <FontAwesome size={28} name="bicycle" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="Diet"
+        options={{
+          headerShown:false,
+          title: "Diet",
+          tabBarIcon: ({color}) =><FontAwesome6 name="bowl-food" size={24} color = {color} />
+        }}
+      />
       <Tabs.Screen
         name="profile"
         options={{
@@ -67,22 +83,7 @@ export default function TabLayout() {
           tabBarStyle: { display: 'none' },
         }}
         />
-        <Tabs.Screen
-        name="Workout"
-        options={{
-          headerShown: false,
-          title: 'Workout',
-          tabBarIcon: ({ color }) => <FontAwesome size={28} name="bicycle" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="Diet"
-        options={{
-          headerShown:false,
-          title: "Diet",
-          tabBarIcon: ({color}) =><FontAwesome6 name="bowl-food" size={24} color = {color} />
-        }}
-      />
+       
     </Tabs>
   );
 }
