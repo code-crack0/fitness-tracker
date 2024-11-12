@@ -1,6 +1,6 @@
 import { Stack } from "expo-router";
 import Excercise from "./Excercise";
-import workoutDetail from "./workoutDetail";
+
 
 export default function Layout() {
     return (

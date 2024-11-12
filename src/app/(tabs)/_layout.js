@@ -76,7 +76,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="Camera"
+        name="Diet"
         options={{
           headerShown:false,
           title: "Diet",
