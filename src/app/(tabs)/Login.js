@@ -1,18 +1,41 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Image, Dimensions } from 'react-native';
 import { TextInput, Button, Text, Title } from 'react-native-paper';
-import { useRouter } from 'expo-router';
+import { useNavigation, useRouter } from 'expo-router';
+import axios from 'axios';
+import API from '../../components/API';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [secureTextEntry, setSecureTextEntry] = useState(true);
+  const navigate = useNavigation();
+  async function handleLogin() {
+    try {
+      const response = await API.post('/login/',{
 
-  const handleLogin = () => {
-    // Handle login logic here
-    console.log("Login clicked");
-  };
+        email: email,
+        password: password,
+      },{
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      if(response.status === 200) {
+        console.log('User logged in successfully');
+        // alert('User logged in successfully');
+        // need to add the token received to axios headers
+        API.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+        await AsyncStorage.setItem('token', response.data.token);
+        navigate.navigate('Home');
+      }
+    
+  } catch (error) {
+    alert('Invalid email or password');
+  }
+}
   const router = useRouter()
   return (
     <View style={styles.container}>
@@ -52,7 +75,6 @@ export default function LoginScreen() {
           onPress={handleLogin}
           style={styles.loginButton}
           contentStyle={styles.loginButtonContent}
-          onPressIn={() => router.push('/Home')}
         >
           Login
         </Button>
@@ -62,7 +84,7 @@ export default function LoginScreen() {
           <Text style={styles.signupText}>Don't have an account?</Text>
           <Button
             mode="text"
-            onPress={() => console.log("Signup clicked")}
+            onPress={() => router.push('/SignUp')}
             labelStyle={styles.signupButtonLabel}
           >
             Sign up

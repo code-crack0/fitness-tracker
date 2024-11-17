@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -16,6 +16,7 @@ import GradientButton from "../../components/gradientButton";
 import WorkoutCard from "../../components/workoutCard";
 import { Searchbar } from "react-native-paper";
 import ActionButton from "../../components/FAB";
+import API from "../../components/API";
 
 const categories = ["Arms", "Chest", "Legs", "Shoulders", "Abs", "Back"];
 const featured = [
@@ -65,6 +66,22 @@ const fullbodyworkout = [
 export default function Workout() {
   const [activeCategory, setActiveCategory] = useState("Action");
   const [searchQuery, setSearchQuery] = useState("");
+  const [workouts, setWorkouts] = useState([]);
+  useEffect( () => {
+    //fetch workouts from API
+    async function fetchWorkouts() {
+      try {
+        await API.get("/workouts").then((response) => {
+          setWorkouts(response.data);
+          console.log(response.status);
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    fetchWorkouts();
+    console.log(workouts);
+  }, []);
 
   const router = useRouter();
   return (

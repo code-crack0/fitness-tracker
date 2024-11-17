@@ -1,5 +1,5 @@
-import { useRouter } from "expo-router";
-import React from "react";
+import { useNavigation, useRouter } from "expo-router";
+import React, { useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -9,17 +9,33 @@ import {
   Image,
 } from "react-native";
 import * as Animatable from "react-native-animatable";
-
+import API from "../../components/API";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const AVATAR_SIZE = Dimensions.get("window").width / 2.5;
 const MARGIN = Dimensions.get("window").width / 18;
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
-const App = ({ onLogin }) => {
+const App = () => {
   // Receive onLogin prop to trigger tab switch
   const firstName = "XXXX";
   const avatar = require("../../../assets/fitify.png");
   const message = "Welcome to Fitify";
+  const navigate = useNavigation();
   const router = useRouter();
+  
+  
+  
+  useEffect(() => {
+    async function get_local_storage_token() { 
+      const response = await AsyncStorage.getItem("token");
+      if(response !== null) {
+        navigate.navigate("Home");
+      }
+  
+    }
+    get_local_storage_token();
+  } , []);
+
   return (
     
       <View style={styles.container}>

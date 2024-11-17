@@ -3,13 +3,37 @@ import { View, StyleSheet, Dimensions, Animated } from 'react-native';
 import { TextInput, Button, Text, Title } from 'react-native-paper';
 import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
 import * as Animatable from 'react-native-animatable';
-
+import axios from 'axios';
+import { useNavigation } from '@react-navigation/native';
+import API from '../../components/API';
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
 export default function SignUp() {
+  const navigate = useNavigation();
   const [pageIndex, setPageIndex] = useState(0);
   const scrollX = new Animated.Value(0);
-
+  async function SignUp () {
+    try {
+      const response = await API.post('/signup/', {
+        
+        email: userDetails.email,
+        password: userDetails.password,
+      },{
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      if(response.status === 201) {
+        console.log('User signed up successfully');
+        alert('Account has been created')
+        navigate.navigate('Login');
+        
+      }
+    } catch (error) {
+      
+      alert(error.response.data.email); 
+    }
+  }
   const [userDetails, setUserDetails] = useState({
     name: '',
     email: '',
@@ -109,7 +133,7 @@ export default function SignUp() {
             <Button mode="text" onPress={previousPage} style={styles.navButton}>
               Previous
             </Button>
-            <Button mode="contained" onPress={() => console.log('Submit', userDetails)} style={styles.navButton}>
+            <Button mode="contained" onPress={async () => await SignUp()} style={styles.navButton}>
               Submit
             </Button>
           </View>
