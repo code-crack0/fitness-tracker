@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Image, FlatList, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import axios from 'axios';
@@ -8,6 +8,7 @@ export default function WorkoutPage() {
   const [exercises, setExercises] = useState([]);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
@@ -15,6 +16,7 @@ export default function WorkoutPage() {
   }, [selectedDate]);
 
   async function fetchExercisesForDate(date) {
+    setLoading(true);
     try {
       const response = await axios.get('https://exercisedb.p.rapidapi.com/exercises', {
         headers: {
@@ -26,6 +28,8 @@ export default function WorkoutPage() {
       setExercises(response.data);
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -37,7 +41,6 @@ export default function WorkoutPage() {
 
   return (
     <View style={styles.container}>
-      {/* Calendar Date Picker */}
       <FlatList
         data={exercises}
         keyExtractor={(item) => item.id}
@@ -46,7 +49,7 @@ export default function WorkoutPage() {
         ListHeaderComponent={
           <View style={styles.headerContainer}>
             <Image
-              source={{ uri: 'https://v2.exercisedb.io/image/tPDuAS64FwZosD' }}
+              source={require('../../assets/images/workout1.jpg')} // Updated to use require
               style={styles.mainImage}
             />
             <Text style={styles.headerTitle}>Workout Exercises</Text>
@@ -72,9 +75,11 @@ export default function WorkoutPage() {
             <Text style={styles.exerciseName}>{item.name}</Text>
           </View>
         )}
+        ListEmptyComponent={
+          loading ? <ActivityIndicator size="large" color="#007BFF" style={styles.loader} /> : null
+        }
       />
 
-      {/* Subscribe Button */}
       <TouchableOpacity style={styles.subscribeButton} onPress={() => alert('Subscribed to Workout!')}>
         <Text style={styles.subscribeText}>Subscribe to Workout</Text>
       </TouchableOpacity>
@@ -96,7 +101,7 @@ const styles = StyleSheet.create({
   },
   dateLabel: {
     fontSize: 14,
-    fontStyle: 'italic', // Makes text cursive-like
+    fontStyle: 'italic',
     color: '#333',
     marginRight: 10,
   },
@@ -115,8 +120,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   mainImage: {
-    width: '100%',
-    height: 200,
+    width: '120%',
+    height: 250,
     resizeMode: 'cover',
   },
   headerTitle: {
@@ -164,5 +169,8 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  loader: {
+    marginTop: 20,
   },
 });

@@ -1,6 +1,7 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Tabs } from 'expo-router';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 export default function TabLayout() {
   return (
     <Tabs
@@ -83,7 +84,14 @@ export default function TabLayout() {
           tabBarStyle: { display: 'none' },
         }}
         />
-       
+       <Tabs.Screen
+        name="MyWorkout"
+        options={{
+          headerShown: false,
+          title: 'MyWorkout',
+          tabBarIcon: ({ color }) => <MaterialIcons name="sports-gymnastics" size={24} color={color} />,
+        }}
+        />
     </Tabs>
   );
 }

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
 
 const API = axios.create({
     baseURL: 'http://192.168.1.200:8000/api/v1/',
@@ -25,7 +26,18 @@ API.interceptors.request.use(
 
 API.interceptors.response.use(
     (response) => response,
-    (error) => {
+    async (error) => {
+
+
+        if (error.response && error.response.status === 401) {
+            console.error("Token expired. Redirecting to login page.");
+
+            // Remove token from AsyncStorage
+            await AsyncStorage.removeItem('token');
+            
+        
+        }
+        
         console.error("Error Response", JSON.stringify(error, null, 2));
         return Promise.reject(error);
     }

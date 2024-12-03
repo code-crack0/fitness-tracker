@@ -14,7 +14,7 @@ export default function workoutCard({workout}) {
   const router = useRouter();
   return (
     <TouchableOpacity className="mr-4 relative" onPress={() => router.push({pathname:"/Excercise",params: {workoutName:""}})}>
-        <Image source={workout.image} className="w-80 h-60 rounded-3xl"/>
+        <Image source={workout.image} className="w-80 h-40 rounded-3xl"/>
         <LinearGradient colors={['transparent', '#00000099']}
             className="absolute p-4 h-full w-full flex justify-between rounded-3xl"
         >

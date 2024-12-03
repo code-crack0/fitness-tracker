@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -14,25 +14,46 @@ import * as ImagePicker from "expo-image-picker";
 import { FontAwesome } from "@expo/vector-icons";
 import { DataTable, ActivityIndicator, Button } from "react-native-paper";
 import { LinearGradient } from "expo-linear-gradient";
-
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as FileSystem from "expo-file-system";
+import axios from "axios";
+import API from "../../components/API";
+
 const screenWidth = Dimensions.get("window").width;
 
 export default function Diet() {
-  const [foodItems, setFoodItems] = useState([
-    { key: "1", name: "Apple", calories: 95, grams: 182 },
-    { key: "2", name: "Banana", calories: 105, grams: 118 },
-    { key: "3", name: "Chicken Breast", calories: 165, grams: 100 },
-    { key: "4", name: "Brown Rice", calories: 216, grams: 100 },
-    { key: "5", name: "Broccoli", calories: 55, grams: 100 },
-  ]);
+  const [foodItems, setFoodItems] = useState([]);
   const [dailyCalories, setDailyCalories] = useState([
     2100, 1950, 2300, 2150, 2000, 2250, 2050,
   ]);
   const [selectedImage, setSelectedImage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [scanResult, setScanResult] = useState(null);
+
+  useEffect(() => {
+    fetchFoodItems();
+  }, []);
+
+  const fetchFoodItems = async () => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      const response = await API.get(
+        "/dietlogitems/",
+      );
+      setFoodItems(response.data);
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        console.error("Token expired. Redirecting to login page.");
+        // Redirect to Login page
+        navigation.reset({
+            index: 0,
+            routes: [{ name: 'Login' }],
+        });
+    } else {
+        console.error("Error fetching food items:", error);
+    }
+    }
+  };
 
   const openCamera = async () => {
     const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
@@ -47,6 +68,7 @@ export default function Diet() {
       console.log(result.assets[0]);
     }
   };
+
   const loadImageBase64 = async (capturedImageURI) => {
     try {
       const base64Data = await FileSystem.readAsStringAsync(capturedImageURI, {
@@ -57,6 +79,7 @@ export default function Diet() {
       console.error("Error converting image to base64:", error);
     }
   };
+
   const uploadImage = async ({ imageUri, apiUrl, token }) =>
     FileSystem.uploadAsync(apiUrl, imageUri, {
       headers: {
@@ -67,6 +90,7 @@ export default function Diet() {
       fieldName: "image",
       mimeType: "image/jpeg",
     });
+
   async function ScanMeal(image) {
     const uri = image.uri;
     const base64Image = await loadImageBase64(uri);
@@ -82,15 +106,6 @@ export default function Diet() {
 
     try {
       const token = await AsyncStorage.getItem("token");
-      console.log("Token:", token); // Check if token is not null or undefined
-
-      // const response = await API.post("/dietlogitems/scan/", {
-      //   formData
-      // }, {
-      //   headers: {
-      //     "Content-Type": "multipart/form-data",
-      //   },
-      // });
       const response = await uploadImage({
         imageUri: uri,
         apiUrl: "http://192.168.1.200:8000/api/v1/dietlogitems/scan/",
@@ -99,8 +114,6 @@ export default function Diet() {
 
       if (response) {
         const data = JSON.parse(response.body);
-        
-        console.log(data);
         setScanResult(data);
       }
     } catch (error) {
@@ -111,16 +124,35 @@ export default function Diet() {
     }
   }
 
-  const handleAccept = () => {
-    // Handle accepting the scan result
-    console.log("Scan result accepted");
-    // You might want to add the scanned item to the foodItems list here
-    setScanResult(null);
+  const handleAccept = async () => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      const requestBody = {
+        food_name: scanResult.food_name,
+        food_calories: scanResult.calories,
+        protein_grams: scanResult.protein_grams,
+        carbs_grams: scanResult.carbs_grams,
+        fat_grams: scanResult.fat_grams,
+        log_time: new Date().toISOString() // Use current time as log_time or adjust as needed
+      };
+  
+      await API.post(
+        "/dietlogitems/",
+        requestBody,
+      );
+  
+      console.log("Scan result accepted");
+      setScanResult(null);
+      setSelectedImage(null);
+      fetchFoodItems(); // Refresh the food items after adding a new item
+    } catch (error) {
+      console.error("Error accepting scan result:", error);
+      alert("Network error while accepting scan result. Please try again.");
+    }
   };
+  
 
   const handleCancel = () => {
-    // Handle cancelling the scan result
-    console.log("Scan result cancelled");
     setScanResult(null);
     setSelectedImage(null);
   };
@@ -169,7 +201,11 @@ export default function Diet() {
             <View>
               <Image source={{ uri: selectedImage }} style={styles.image} />
               {isLoading && (
-                <ActivityIndicator animating={true} color="#0000ff" style={styles.loader} />
+                <ActivityIndicator
+                  animating={true}
+                  color="#0000ff"
+                  style={styles.loader}
+                />
               )}
               {scanResult && (
                 <View style={styles.resultContainer}>
@@ -217,21 +253,28 @@ export default function Diet() {
 
           <View style={styles.card}>
             <Text style={styles.cardTitle}>Today's Food Log</Text>
-            <DataTable style={styles.table}>
-              <DataTable.Header style={styles.tableHeader}>
-                <DataTable.Title>Food Item</DataTable.Title>
-                <DataTable.Title numeric>Calories</DataTable.Title>
-                <DataTable.Title numeric>Grams</DataTable.Title>
-              </DataTable.Header>
+            {foodItems.length === 0 ? (
+              <Text style={styles.noItemsText}>
+                No items logged yet. Start by scanning a meal!
+              </Text>
+            ) : (
+              <DataTable style={styles.table}>
+                <DataTable.Header style={styles.tableHeader}>
+                  <DataTable.Title>Food Item</DataTable.Title>
+                  <DataTable.Title numeric>Calories</DataTable.Title>
+                  <DataTable.Title numeric>Grams</DataTable.Title>
+                </DataTable.Header>
 
-              {foodItems.map((item) => (
-                <DataTable.Row key={item.key}>
-                  <DataTable.Cell>{item.name}</DataTable.Cell>
-                  <DataTable.Cell numeric>{item.calories}</DataTable.Cell>
-                  <DataTable.Cell numeric>{item.grams}</DataTable.Cell>
-                </DataTable.Row>
-              ))}
-            </DataTable>
+                {foodItems.map((item) => (
+                  <DataTable.Row key={item.id}>
+                    <DataTable.Cell>{item.food_name}</DataTable.Cell>
+                    <DataTable.Cell numeric>{item.food_calories}</DataTable.Cell>
+                    <DataTable.Cell numeric>{item.carbs_grams}</DataTable.Cell>
+                   
+                  </DataTable.Row>
+                ))}
+              </DataTable>
+            )}
           </View>
 
           <View style={styles.card}>
@@ -247,14 +290,8 @@ export default function Diet() {
                 decimalPlaces: 0,
                 color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
                 labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-                style: {
-                  borderRadius: 16,
-                },
-                propsForDots: {
-                  r: "6",
-                  strokeWidth: "2",
-                  stroke: "#ffa726",
-                },
+                style: { borderRadius: 16 },
+                propsForDots: { r: "6", strokeWidth: "2", stroke: "#ffa726" },
               }}
               bezier
               style={styles.chart}
@@ -292,7 +329,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#333",
   },
-  loader:{
+  loader: {
     marginTop: 20,
     marginBottom: 20,
   },
